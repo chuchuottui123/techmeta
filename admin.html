@@ -116,14 +116,23 @@ onAuthStateChanged(auth, (user) => {
    ➕ THÊM TOOL (BƯỚC 4)
    ========================= */
 window.addTool = async () => {
+  if (!nameInput.value || !linkInput.value) {
+    alert("Nhập thiếu thông tin!");
+    return;
+  }
+
   await addDoc(collection(db, "tools"), {
-    name: name.value,
-    description: desc.value,
-    link: link.value,
-    active: true
+    name: nameInput.value,
+    description: descInput.value,
+    link: linkInput.value,
+    active: true,
+    createdAt: Date.now()
   });
 
-  name.value = desc.value = link.value = "";
+  nameInput.value = "";
+  descInput.value = "";
+  linkInput.value = "";
+
   loadTools();
 };
 
