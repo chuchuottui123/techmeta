@@ -1,54 +1,18 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>My Tools</title>
-  <style>
-    body { font-family: Arial; background: #0f172a; color: #fff; }
-    .tool {
-      background: #111827;
-      padding: 15px;
-      margin: 10px;
-      border-radius: 8px;
-    }
-    a { color: #38bdf8; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tools</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>🧰 Danh sách Tools</h1>
-<div id="tools"></div>
+<h1>🔧 Danh sách Tools TECH META</h1>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<div class="tools" id="toolList">
+</div>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAzsMJt79_4AddFA5X--7-DHtOzFfnhb9c",
-    authDomain: "my-tools-admin.firebaseapp.com",
-    projectId: "my-tools-admin",
-    appId: "1:816632213064:web:c600a0f805e2f6ea2cb27d"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  const toolsDiv = document.getElementById("tools");
-  const querySnapshot = await getDocs(collection(db, "tools"));
-
-  querySnapshot.forEach(doc => {
-    const t = doc.data();
-    if (t.active) {
-      toolsDiv.innerHTML += `
-        <div class="tool">
-          <h3>${t.name}</h3>
-          <p>${t.description}</p>
-          <a href="${t.link}" target="_blank">Mở tool</a>
-        </div>
-      `;
-    }
-  });
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>

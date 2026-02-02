@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Comment Instagram",
+    "desc": "Comment vào bài viết mới nhất của của username đã chọn...",
+    "tag": "Liên Hệ"
+  },
+  {
+    "name": "Nhắn tin đến Bạn Bè Facebook theo UID",
+    "desc": "tặng tools quét uid bạn bè...",
+    "tag": "Liên Hệ"
+  }
+  ,
+  {
+    "name": "Nhắn tin đến username Instagram",
+    "desc": "Auto nhắn tin đến username IG. Tặng tools quét username IG...",
+    "tag": "Liên Hệ"
+  }
+  ,
+  {
+    "name": "Đăng bài Đề Xuất Page",
+    "desc": "Dùng Page đăng bài vào mục Đề Xuất của page khác, comment vào bài viết vừa đăng...",
+    "tag": "Liên Hệ"
+  }
+  ,
+  {
+    "name": "Share LinkBM",
+    "desc": "Dùng BM share mail người nhận...",
+    "tag": "Liên Hệ"
+  }
+   ,
+  {
+    "name": "Đăng bài Event Page",
+    "desc": "Đăng bài theo event có sẵn hoặc tạo event rồi đăng bài, comment vào bài viết vừa đăng...",
+    "tag": "Liên Hệ"
+  }
+  ,
+  {
+    "name": "Đăng bài Kèm Ảnh",
+    "desc": "Đăng bài nhiều ảnh, mỗi ảnh chèn thêm nội dung và có thể tag UID vào nội dung... ",
+    "tag": "Liên Hệ"
+  }
+]

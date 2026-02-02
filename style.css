@@ -1,0 +1,126 @@
+/* RESET + BASE */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0f1220;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    padding: 40px;
+}
+
+/* TITLE */
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 28px;
+}
+
+/* TOOLS GRID */
+.tools {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 thẻ / 1 dòng */
+    gap: 20px;
+}
+
+/* TOOL CARD */
+.tool {
+    background: #1a1f36;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.tool:hover {
+    transform: translateY(-6px);
+    background: #232963;
+}
+
+/* TOOL TITLE */
+.tool h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+/* TOOL DESC */
+.tool p {
+    font-size: 14px;
+    color: #cccccc;
+    line-height: 1.5;
+}
+
+/* TAG BUTTON */
+.tag {
+    margin-top: auto;          /* đẩy xuống đáy card */
+    align-self: flex-end;      /* bám góc phải */
+    display: inline-block;
+
+    padding: 5px 14px;
+    font-size: 12px;
+    background: #5b6cff;
+    border-radius: 20px;
+
+    color: #ffffff;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.tag:hover {
+    opacity: 0.85;
+}
+
+/* FIX LINK STYLE */
+a.tag {
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+/* ===== RESPONSIVE ===== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .tools {
+        grid-template-columns: repeat(2, 1fr); /* 2 thẻ / dòng */
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    body {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 22px;
+        margin-bottom: 25px;
+    }
+
+    .tools {
+        grid-template-columns: 1fr; /* 1 thẻ / dòng */
+        gap: 15px;
+    }
+
+    .tool {
+        padding: 16px;
+        border-radius: 10px;
+    }
+
+    .tool h2 {
+        font-size: 16px;
+    }
+
+    .tool p {
+        font-size: 13px;
+    }
+
+    .tag {
+        font-size: 11px;
+        padding: 4px 12px;
+    }
+}
