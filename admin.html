@@ -3,53 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin Panel</title>
+
   <style>
     body { font-family: Arial; padding: 40px }
-    input { padding: 8px; width: 250px }
-    button { padding: 8px 16px; cursor: pointer }
+    input { padding: 8px; width: 260px; margin: 4px 0 }
+    button { padding: 6px 14px; margin: 4px; cursor: pointer }
+    .tool { border: 1px solid #ccc; padding: 10px; margin: 10px 0 }
   </style>
 </head>
 <body>
 
-<h2>Admin Login</h2>
+<h2>🔐 Admin Login</h2>
 
 <div id="loginBox">
-  <input id="email" placeholder="Email"><br><br>
-  <input id="password" type="password" placeholder="Password"><br><br>
+  <input id="email" placeholder="Email"><br>
+  <input id="password" type="password" placeholder="Password"><br>
   <button id="btnLogin">Login</button>
   <p id="err" style="color:red"></p>
 </div>
 
 <div id="adminBox" style="display:none">
-  <h1>ADMIN PANEL</h1>
+  <h1>🛠 ADMIN PANEL</h1>
   <p id="info"></p>
-  <h2>➕ Thêm tool</h2>
 
-<input id="name" placeholder="Tên tool"><br>
-<input id="desc" placeholder="Mô tả"><br>
-<input id="link" placeholder="Link"><br>
-<button onclick="addTool()">Thêm</button>
+  <h3>➕ Thêm tool</h3>
+  <input id="name" placeholder="Tên tool"><br>
+  <input id="desc" placeholder="Mô tả"><br>
+  <input id="link" placeholder="Link"><br>
+  <button onclick="addTool()">Thêm</button>
 
-<script type="module">
-  import { getFirestore, collection, addDoc } 
-  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  <h3>📦 Danh sách tool</h3>
+  <div id="toolList"></div>
 
-  const db = getFirestore();
-
-  window.addTool = async () => {
-    await addDoc(collection(db, "tools"), {
-      name: name.value,
-      description: desc.value,
-      link: link.value,
-      active: true
-    });
-
-    alert("✅ Thêm tool thành công");
-  }
-</script>
   <button id="btnLogout">Logout</button>
 </div>
 
+<!-- 🔥 FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
@@ -59,7 +48,17 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-/* 🔥 Firebase config */
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* 🔧 CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyAzsMJt79_4AddFA5X--7-DHtOzFfnhb9c",
   authDomain: "my-tools-admin.firebaseapp.com",
@@ -67,70 +66,104 @@ const firebaseConfig = {
   appId: "1:816632213064:web:c600a0f805e2f6ea2cb27d"
 };
 
-/* 🔐 Email admin */
-const ADMIN_EMAILS = [
-  "hoang@gmail.com"
-];
+/* 🔐 ADMIN EMAIL */
+const ADMIN_EMAILS = ["hoang@gmail.com"];
 
-/* Init */
-const app = initializeApp(firebaseConfig);
+/* INIT */
+const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db   = getFirestore(app);
 
 /* DOM */
-const emailInput = document.getElementById("email");
-const passInput  = document.getElementById("password");
-const errText    = document.getElementById("err");
-const loginBox   = document.getElementById("loginBox");
-const adminBox   = document.getElementById("adminBox");
-const infoText   = document.getElementById("info");
+const loginBox = document.getElementById("loginBox");
+const adminBox = document.getElementById("adminBox");
+const errText  = document.getElementById("err");
+const infoText = document.getElementById("info");
+const toolList = document.getElementById("toolList");
 
-let alerted = false;
-
-/* Login */
+/* LOGIN */
 document.getElementById("btnLogin").onclick = async () => {
   errText.innerText = "";
-
-  const email = emailInput.value.trim();
-  const pass  = passInput.value;
-
-  if (!email || !pass) {
-    errText.innerText = "Nhập đầy đủ email và mật khẩu";
-    return;
-  }
-
   try {
-    await signInWithEmailAndPassword(auth, email, pass);
+    await signInWithEmailAndPassword(
+      auth,
+      email.value,
+      password.value
+    );
   } catch (e) {
-    console.error(e.code);
     errText.innerText = e.code;
   }
 };
 
-/* Logout */
-document.getElementById("btnLogout").onclick = () => {
-  signOut(auth);
-  alerted = false;
-};
+/* LOGOUT */
+btnLogout.onclick = () => signOut(auth);
 
-/* Auth state */
+/* AUTH STATE */
 onAuthStateChanged(auth, (user) => {
   if (user && ADMIN_EMAILS.includes(user.email)) {
     loginBox.style.display = "none";
     adminBox.style.display = "block";
-    infoText.innerText = "Xin chào admin: " + user.email;
-
-    if (!alerted) {
-      alert("✅ Đăng nhập admin thành công!");
-      alerted = true;
-    }
+    infoText.innerText = "Xin chào: " + user.email;
+    loadTools();
   } else {
     loginBox.style.display = "block";
     adminBox.style.display = "none";
-    alerted = false;
-
-    if (user) signOut(auth); // không phải admin
+    if (user) signOut(auth);
   }
 });
+
+/* =========================
+   ➕ THÊM TOOL (BƯỚC 4)
+   ========================= */
+window.addTool = async () => {
+  await addDoc(collection(db, "tools"), {
+    name: name.value,
+    description: desc.value,
+    link: link.value,
+    active: true
+  });
+
+  name.value = desc.value = link.value = "";
+  loadTools();
+};
+
+/* 📦 LOAD TOOL */
+async function loadTools() {
+  toolList.innerHTML = "";
+  const snap = await getDocs(collection(db, "tools"));
+
+  snap.forEach(docSnap => {
+    const t = docSnap.data();
+    toolList.innerHTML += `
+      <div class="tool">
+        <b>${t.name}</b><br>
+        ${t.description}<br>
+        <a href="${t.link}" target="_blank">${t.link}</a><br>
+        <button onclick="editTool('${docSnap.id}')">Sửa</button>
+        <button onclick="deleteTool('${docSnap.id}')">Xoá</button>
+      </div>
+    `;
+  });
+}
+
+/* ✏️ SỬA TOOL */
+window.editTool = async (id) => {
+  const newName = prompt("Tên mới:");
+  if (!newName) return;
+
+  await updateDoc(doc(db, "tools", id), {
+    name: newName
+  });
+
+  loadTools();
+};
+
+/* ❌ XOÁ TOOL */
+window.deleteTool = async (id) => {
+  if (!confirm("Xoá tool này?")) return;
+  await deleteDoc(doc(db, "tools", id));
+  loadTools();
+};
 </script>
 
 </body>
