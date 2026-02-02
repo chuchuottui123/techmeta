@@ -1,57 +1,56 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <title>Admin</title>
+  <meta charset="UTF-8">
+  <title>Admin Login</title>
 </head>
 <body>
+
+<div id="loginBox">
+  <h2>Admin Login</h2>
+  <input id="user" placeholder="Username"><br><br>
+  <input id="pass" type="password" placeholder="Password"><br><br>
+  <button onclick="login()">Login</button>
+  <p id="error" style="color:red;"></p>
+</div>
+
+<div id="adminBox" style="display:none;">
   <h1>Admin Panel</h1>
+  <p>Đã đăng nhập thành công 🎉</p>
+  <button onclick="logout()">Logout</button>
+</div>
 
-  <button id="loginBtn">Login bằng Google</button>
-  <button id="logoutBtn" style="display:none;">Logout</button>
+<script>
+  const USER = "admin123";
+  const PASS = "hoang123";
 
-  <p id="status"></p>
+  // check login cũ
+  if (localStorage.getItem("admin_login") === "ok") {
+    showAdmin();
+  }
 
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
-      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  function login() {
+    const u = document.getElementById("user").value;
+    const p = document.getElementById("pass").value;
 
-    const firebaseConfig = {
-      apiKey: "API_KEY_CUA_BAN",
-      authDomain: "my-tools-admin.firebaseapp.com",
-      projectId: "my-tools-admin",
-      appId: "APP_ID_CUA_BAN"
-    };
+    if (u === USER && p === PASS) {
+      localStorage.setItem("admin_login", "ok");
+      showAdmin();
+    } else {
+      document.getElementById("error").innerText = "Sai tài khoản hoặc mật khẩu";
+    }
+  }
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
+  function logout() {
+    localStorage.removeItem("admin_login");
+    location.reload();
+  }
 
-    const loginBtn = document.getElementById("loginBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const status = document.getElementById("status");
+  function showAdmin() {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("adminBox").style.display = "block";
+  }
+</script>
 
-    loginBtn.onclick = async () => {
-      await signInWithPopup(auth, provider);
-    };
-
-    logoutBtn.onclick = async () => {
-      await signOut(auth);
-    };
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        status.innerText = "Đã đăng nhập: " + user.email;
-        loginBtn.style.display = "none";
-        logoutBtn.style.display = "inline";
-      } else {
-        status.innerText = "Chưa đăng nhập";
-        loginBtn.style.display = "inline";
-        logoutBtn.style.display = "none";
-      }
-    });
-  </script>
 </body>
 </html>
