@@ -1,17 +1,57 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Admin</title>
+  <meta charset="UTF-8" />
+  <title>Admin</title>
 </head>
 <body>
   <h1>Admin Panel</h1>
-  <p>Trang quản lý tools</p>
+
+  <button id="loginBtn">Login bằng Google</button>
+  <button id="logoutBtn" style="display:none;">Logout</button>
+
+  <p id="status"></p>
 
   <!-- Firebase -->
   <script type="module">
-    ...firebase code...
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
+      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "API_KEY_CUA_BAN",
+      authDomain: "my-tools-admin.firebaseapp.com",
+      projectId: "my-tools-admin",
+      appId: "APP_ID_CUA_BAN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const status = document.getElementById("status");
+
+    loginBtn.onclick = async () => {
+      await signInWithPopup(auth, provider);
+    };
+
+    logoutBtn.onclick = async () => {
+      await signOut(auth);
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        status.innerText = "Đã đăng nhập: " + user.email;
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline";
+      } else {
+        status.innerText = "Chưa đăng nhập";
+        loginBtn.style.display = "inline";
+        logoutBtn.style.display = "none";
+      }
+    });
   </script>
 </body>
-
 </html>
