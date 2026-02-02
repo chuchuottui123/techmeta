@@ -58,15 +58,23 @@ window.login = async () => {
 
 
 window.logout = () => signOut(auth);
+let alerted = false;
 
 onAuthStateChanged(auth, (user) => {
   if (user && ADMIN_EMAILS.includes(user.email)) {
     login.style.display = "none";
     admin.style.display = "block";
     info.innerText = "Xin chào admin: " + user.email;
+
+    if (!alerted) {
+      alert("✅ Đăng nhập admin thành công!");
+      alerted = true;
+    }
   } else {
     login.style.display = "block";
     admin.style.display = "none";
+    alerted = false;
+
     if (user) signOut(auth); // ❌ không phải admin
   }
 });
