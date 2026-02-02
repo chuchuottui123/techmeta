@@ -2,23 +2,28 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Admin</title>
+  <title>Admin Panel</title>
+  <style>
+    body { font-family: Arial; padding: 40px }
+    input { padding: 8px; width: 250px }
+    button { padding: 8px 16px; cursor: pointer }
+  </style>
 </head>
 <body>
 
 <h2>Admin Login</h2>
 
-<div id="login">
+<div id="loginBox">
   <input id="email" placeholder="Email"><br><br>
   <input id="password" type="password" placeholder="Password"><br><br>
-  <button onclick="login()">Login</button>
+  <button id="btnLogin">Login</button>
   <p id="err" style="color:red"></p>
 </div>
 
-<div id="admin" style="display:none">
+<div id="adminBox" style="display:none">
   <h1>ADMIN PANEL</h1>
   <p id="info"></p>
-  <button onclick="logout()">Logout</button>
+  <button id="btnLogout">Logout</button>
 </div>
 
 <script type="module">
@@ -30,7 +35,7 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// 🔥 Firebase config
+/* 🔥 Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyAzsMJt79_4AddFA5X--7-DHtOzFfnhb9c",
   authDomain: "my-tools-admin.firebaseapp.com",
@@ -38,44 +43,68 @@ const firebaseConfig = {
   appId: "1:816632213064:web:c600a0f805e2f6ea2cb27d"
 };
 
+/* 🔐 Email admin */
 const ADMIN_EMAILS = [
   "hoang@gmail.com"
 ];
 
+/* Init */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-window.login = async () => {
-  try {
-    const emailValue = document.getElementById("email").value.trim();
-    const passValue = document.getElementById("password").value;
+/* DOM */
+const emailInput = document.getElementById("email");
+const passInput  = document.getElementById("password");
+const errText    = document.getElementById("err");
+const loginBox   = document.getElementById("loginBox");
+const adminBox   = document.getElementById("adminBox");
+const infoText   = document.getElementById("info");
 
-    await signInWithEmailAndPassword(auth, emailValue, passValue);
+let alerted = false;
+
+/* Login */
+document.getElementById("btnLogin").onclick = async () => {
+  errText.innerText = "";
+
+  const email = emailInput.value.trim();
+  const pass  = passInput.value;
+
+  if (!email || !pass) {
+    errText.innerText = "Nhập đầy đủ email và mật khẩu";
+    return;
+  }
+
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
   } catch (e) {
-    err.innerText = "Sai email hoặc mật khẩu";
+    console.error(e.code);
+    errText.innerText = e.code;
   }
 };
 
+/* Logout */
+document.getElementById("btnLogout").onclick = () => {
+  signOut(auth);
+  alerted = false;
+};
 
-window.logout = () => signOut(auth);
-let alerted = false;
-
+/* Auth state */
 onAuthStateChanged(auth, (user) => {
   if (user && ADMIN_EMAILS.includes(user.email)) {
-    login.style.display = "none";
-    admin.style.display = "block";
-    info.innerText = "Xin chào admin: " + user.email;
+    loginBox.style.display = "none";
+    adminBox.style.display = "block";
+    infoText.innerText = "Xin chào admin: " + user.email;
 
     if (!alerted) {
       alert("✅ Đăng nhập admin thành công!");
       alerted = true;
     }
   } else {
-    login.style.display = "block";
-    admin.style.display = "none";
+    loginBox.style.display = "block";
+    adminBox.style.display = "none";
     alerted = false;
 
-    if (user) signOut(auth); // ❌ không phải admin
+    if (user) signOut(auth); // không phải admin
   }
 });
 </script>
