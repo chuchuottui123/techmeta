@@ -23,6 +23,30 @@
 <div id="adminBox" style="display:none">
   <h1>ADMIN PANEL</h1>
   <p id="info"></p>
+  <h2>➕ Thêm tool</h2>
+
+<input id="name" placeholder="Tên tool"><br>
+<input id="desc" placeholder="Mô tả"><br>
+<input id="link" placeholder="Link"><br>
+<button onclick="addTool()">Thêm</button>
+
+<script type="module">
+  import { getFirestore, collection, addDoc } 
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const db = getFirestore();
+
+  window.addTool = async () => {
+    await addDoc(collection(db, "tools"), {
+      name: name.value,
+      description: desc.value,
+      link: link.value,
+      active: true
+    });
+
+    alert("✅ Thêm tool thành công");
+  }
+</script>
   <button id="btnLogout">Logout</button>
 </div>
 
