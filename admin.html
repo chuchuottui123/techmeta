@@ -47,13 +47,15 @@ const auth = getAuth(app);
 
 window.login = async () => {
   try {
-    const email = email.value;
-    const pass = password.value;
-    await signInWithEmailAndPassword(auth, email, pass);
-  } catch {
+    const emailValue = document.getElementById("email").value.trim();
+    const passValue = document.getElementById("password").value;
+
+    await signInWithEmailAndPassword(auth, emailValue, passValue);
+  } catch (e) {
     err.innerText = "Sai email hoặc mật khẩu";
   }
 };
+
 
 window.logout = () => signOut(auth);
 
