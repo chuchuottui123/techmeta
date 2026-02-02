@@ -22,57 +22,71 @@
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { 
-    getAuth,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAzsMJt79_4AddFA5X--7-DHtOzFfnhb9c",
-    authDomain: "my-tools-admin.firebaseapp.com",
-    projectId: "my-tools-admin",
-    appId: "1:816632213064:web:c600a0f805e2f6ea2cb27d"
-  };
+/* ===== Firebase config ===== */
+const firebaseConfig = {
+  apiKey: "AIzaSyAzsMJt79_4AddFA5X--7-DHtOzFfnhb9c",
+  authDomain: "my-tools-admin.firebaseapp.com",
+  projectId: "my-tools-admin",
+  appId: "1:816632213064:web:c600a0f805e2f6ea2cb27d"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-  const ADMIN_EMAIL = "admin@mytools.com"; // email admin bạn tạo
+/* ===== DOM ===== */
+const loginBox = document.getElementById("loginBox");
+const adminBox = document.getElementById("adminBox");
+const error = document.getElementById("error");
+const emailInput = document.getElementById("email");
+const passInput = document.getElementById("password");
 
-  const loginBox = document.getElementById("loginBox");
-  const adminBox = document.getElementById("adminBox");
-  const error = document.getElementById("error");
+/* ===== Login ===== */
+document.getElementById("loginBtn").onclick = async () => {
+  error.innerText = "";
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      emailInput.value.trim(),
+      passInput.value
+    );
+  } catch (e) {
+    error.innerText = "Sai email hoặc mật khẩu";
+  }
+};
 
-  document.getElementById("loginBtn").onclick = async () => {
-    error.innerText = "";
-    try {
-      const email = document.getElementById("email").value;
-      const pass = document.getElementById("password").value;
-      await signInWithEmailAndPassword(auth, email, pass);
-    } catch (e) {
-      error.innerText = "Sai email hoặc mật khẩu";
-    }
-  };
+/* ===== Logout ===== */
+document.getElementById("logoutBtn").onclick = () => {
+  signOut(auth);
+};
 
-  document.getElementById("logoutBtn").onclick = () => {
+/* ===== Auth state ===== */
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    loginBox.style.display = "block";
+    adminBox.style.display = "none";
+    return;
+  }
+
+  const token = await user.getIdTokenResult();
+
+  if (token.claims.role === "admin") {
+    loginBox.style.display = "none";
+    adminBox.style.display = "block";
+    document.getElementById("adminEmail").innerText =
+      "Đăng nhập: " + user.email;
+  } else {
+    alert("Bạn không có quyền admin");
     signOut(auth);
-  };
-
-  onAuthStateChanged(auth, (user) => {
-    if (user && user.email === ADMIN_EMAIL) {
-      loginBox.style.display = "none";
-      adminBox.style.display = "block";
-      document.getElementById("adminEmail").innerText =
-        "Đăng nhập: " + user.email;
-    } else {
-      loginBox.style.display = "block";
-      adminBox.style.display = "none";
-      if (user) signOut(auth); // không phải admin → đá ra
-    }
-  });
+  }
+});
 </script>
 
 </body>
